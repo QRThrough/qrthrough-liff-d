@@ -23,28 +23,28 @@ function SignInPage() {
 	});
 
 	async function liffService() {
-		setUserData({
-			role: "ADMIN",
-		});
-		// await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
-		// if (liff.isLoggedIn()) {
-		// 	if (userData && userData.role === "USER") {
-		// 		liff.logout();
-		// 		setUserData(null);
-		// 	} else {
-		// 		try {
-		// 			const data = (await signInService()).data;
-		// 			setUserData((prev) => ({
-		// 				...prev,
-		// 				role: data.result.role,
-		// 			}));
-		// 		} catch (err) {
-		// 			console.log(err);
-		// 			liff.logout();
-		// 			setUserData(null);
-		// 		}
-		// 	}
-		// }
+		// setUserData({
+		// 	role: "ADMIN",
+		// });
+		await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
+		if (liff.isLoggedIn()) {
+			if (userData && userData.role === "USER") {
+				liff.logout();
+				setUserData(null);
+			} else {
+				try {
+					const data = (await signInService()).data;
+					setUserData((prev) => ({
+						...prev,
+						role: data.result.role,
+					}));
+				} catch (err) {
+					console.log(err);
+					liff.logout();
+					setUserData(null);
+				}
+			}
+		}
 	}
 
 	const handlerSignIn = () => {

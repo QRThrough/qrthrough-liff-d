@@ -14,6 +14,7 @@ import DashboardLayout from "../common/layout/DashboardLayout";
 import PageLayout from "../common/layout/PageLayout";
 import { TuserData } from "../types";
 import { useUserDataContext } from "../context/userData";
+import liff from "@line/liff";
 
 interface ICustomRoute {
 	user: TuserData;
@@ -22,14 +23,14 @@ interface ICustomRoute {
 }
 
 const AuthRoute = ({ user, redirectPath, children }: ICustomRoute) => {
-	//if (!user || user.role === "USER" || !liff.isLoggedIn()) return children;
-	if (!user || user.role === "USER") return children;
+	if (!user || user.role === "USER" || !liff.isLoggedIn()) return children;
+	//if (!user || user.role === "USER") return children;
 	return <Navigate to={redirectPath} replace />;
 };
 
 const ProtectRoute = ({ user, redirectPath, children }: ICustomRoute) => {
-	//if (user && user.role !== "USER" &&  liff.isLoggedIn()) return children;
-	if (user && user.role !== "USER") return children;
+	if (user && user.role !== "USER" && liff.isLoggedIn()) return children;
+	//if (user && user.role !== "USER") return children;
 	return <Navigate to={redirectPath} replace />;
 };
 
