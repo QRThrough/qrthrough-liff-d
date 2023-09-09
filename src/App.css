@@ -1,42 +1,102 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+body {
+	overscroll-behavior: none;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	font-family: "Poppins", "Mitr", sans-serif;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+img {
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	-o-user-drag: none;
+	user-drag: none;
+	width: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+html {
+	box-sizing: border-box;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-.card {
-  padding: 2em;
+button,
+fieldset {
+	display: block;
+	width: 100%;
+	margin: 0;
+	border: none;
+	font: inherit;
+	cursor: pointer;
 }
 
-.read-the-docs {
-  color: #888;
+input,
+select {
+	display: block;
+	width: 100%;
+	margin: 0;
+	background-color: transparent;
+	font: inherit;
+
+	&:focus {
+		outline: none;
+	}
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+	}
+}
+
+a {
+	text-decoration: none;
+
+	&:visited {
+		color: inherit;
+	}
+}
+
+* {
+	box-sizing: inherit;
+
+	&::before,
+	&::after {
+		box-sizing: inherit;
+	}
+}
+
+textarea {
+	background-color: #f6f6f6;
+	display: block;
+	width: 100%;
+	min-height: 132px;
+	border: 0;
+	resize: none;
+	border-radius: 0.5em;
+	padding: 1em;
+	font-family: inherit;
+	font-size: inherit;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+[disabled] {
+	pointer-events: none;
 }
