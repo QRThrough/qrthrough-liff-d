@@ -1,7 +1,7 @@
 FROM node:20.4.0 as build
 WORKDIR /app
 COPY . .
-RUN npm install --omit=optional \
+RUN npm install --omit=optional --force \
     && npm run build
 
 FROM nginx:1.25.1 as prod

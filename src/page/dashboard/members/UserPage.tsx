@@ -23,10 +23,10 @@ import { useDisclosure } from "@mantine/hooks";
 import dayjs from "dayjs";
 import liff from "@line/liff";
 import { useUserDataContext } from "../../../context/userData";
-import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import SearchBar from "./component/SearchBar";
 import EditForm from "./component/EditForm";
+import { modals } from "@mantine/modals";
 
 function UserPage() {
 	const [opened, { open, close }] = useDisclosure(false);
@@ -70,11 +70,8 @@ function UserPage() {
 				filter.status.includes(e.is_active ? "Active" : "Inactive")
 			)
 			.filter((e) => {
-				const date = new Date(
-					dayjs(e.created_at).utc().format("MM/DD/YYYY HH:mm:ss A")
-				);
-				console.log(date);
-				console.log(filter.start + " to " + filter.end);
+				const date = new Date(dayjs(e.created_at).utc().toString());
+
 				return date >= filter.start && date <= filter.end;
 			});
 
@@ -271,6 +268,7 @@ function UserPage() {
 			</Modal>
 			<Flex direction="column" h="100%">
 				<SearchBar
+					moderatorPage={false}
 					membersData={membersData}
 					filter={filter}
 					setFilter={setFilter}

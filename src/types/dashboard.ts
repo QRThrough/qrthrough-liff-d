@@ -26,7 +26,20 @@ export type TUser = {
 	updated_at: Date;
 };
 
+export type TLog = {
+	id: number;
+	account_id: number;
+	account: TUser;
+	created_at: Date;
+	updated_at: Date;
+};
+
 export interface IResUserResponse {
 	count: number;
 	users: TUser[];
+}
+
+export interface IResLogResponse {
+	count: number;
+	logs: TLog[];
 }

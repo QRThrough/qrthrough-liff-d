@@ -2,6 +2,7 @@ import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { ActionIcon, Box, Tooltip } from "@mantine/core";
 import { IconFilePencil, IconTrashFilled } from "@tabler/icons-react";
 import { TUser } from "../../../../types";
+import { useUserDataContext } from "../../../../context/userData";
 
 interface ITableMember {
 	columns: MRT_ColumnDef<TUser>[];
@@ -16,6 +17,7 @@ function TableComponent({
 	editAction,
 	deleteAction,
 }: ITableMember) {
+	const { userData } = useUserDataContext();
 	return (
 		<Box mt="xl" sx={{ height: "100%", overflowY: "scroll" }}>
 			<MantineReactTable
@@ -35,14 +37,16 @@ function TableComponent({
 								<IconFilePencil />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip position="right" label="Delete">
-							<ActionIcon
-								color="red"
-								onClick={() => deleteAction(row.original.id)}
-							>
-								<IconTrashFilled />
-							</ActionIcon>
-						</Tooltip>
+						{userData && userData.role === "ADMIN" && (
+							<Tooltip position="right" label="Delete">
+								<ActionIcon
+									color="red"
+									onClick={() => deleteAction(row.original.id)}
+								>
+									<IconTrashFilled />
+								</ActionIcon>
+							</Tooltip>
+						)}
 					</Box>
 				)}
 				mantineTableProps={{

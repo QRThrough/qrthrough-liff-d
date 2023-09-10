@@ -11,21 +11,24 @@ import {
 import { IconFileExport, IconSearch } from "@tabler/icons-react";
 import { IResUserResponse, TFilter, TFilterType } from "../../../../types";
 import { DateTimePicker } from "@mantine/dates";
-import { mkConfig, generateCsv, download } from "export-to-csv";
 import dayjs from "dayjs";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 
 interface ISearchMember {
+	moderatorPage: boolean;
 	membersData: IResUserResponse;
 	filter: TFilter;
 	setFilter: React.Dispatch<React.SetStateAction<TFilter>>;
 }
 
-function SearchBar({ membersData, filter, setFilter }: ISearchMember) {
-	const csvConfig = mkConfig({
-		useKeysAsHeaders: true,
-		filename: "Users_" + new Date(),
-	});
-	const exportDate = membersData.users.map((e) => {
+function SearchBar({
+	moderatorPage = false,
+	membersData,
+	filter,
+	setFilter,
+}: ISearchMember) {
+	const exportData = membersData.users.map((e) => {
 		let regType = "";
 		switch (e.flag) {
 			case "NOTFOUND":
@@ -41,17 +44,32 @@ function SearchBar({ membersData, filter, setFilter }: ISearchMember) {
 				break;
 		}
 		return {
-			รหัสนักศึกษา: e.student_code,
-			ชื่อ: e.firstname,
-			นามสกุล: e.lastname,
-			เบอร์: String(e.tel),
-			ชนิดการสมัคร: regType,
-			วันที่สมัคร: dayjs(e.created_at).utc().format("DD/MM/YYYY HH:mm:ss A"),
+			["รหัสนักศึกษา"]: e.student_code,
+			["ชื่อ"]: e.firstname,
+			["นามสกุล"]: e.lastname,
+			["เบอร์"]: String(e.tel),
+			["ชนิดการสมัคร"]: regType,
+			["วันที่สมัคร"]: dayjs(e.created_at)
+				.utc()
+				.format("DD/MM/YYYY HH:mm:ss A"),
 		};
 	});
 
+	const handleExport = () => {
+		const fileType =
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+		const fileExtension = ".xlsx";
+		const ws = XLSX.utils.json_to_sheet(exportData);
+		const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+		const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+		const data = new Blob([excelBuffer], { type: fileType });
+		FileSaver.saveAs(
+			data,
+			`${moderatorPage ? "Moderators" : "Users"}` + new Date() + fileExtension
+		);
+	};
+
 	// Converts your Array<Object> to a CsvOutput string based on the configs
-	const csv = generateCsv(csvConfig)(exportDate);
 
 	const handleFlag = (flag: string[]) => {
 		setFilter((prev: TFilter) => {
@@ -86,7 +104,7 @@ function SearchBar({ membersData, filter, setFilter }: ISearchMember) {
 			<Flex justify="space-between" align="center" gap="2rem">
 				<Box sx={{ flex: 0.5 }} miw="100px">
 					<Text size="20px" weight="600">
-						ผู้ใช้งาน
+						{moderatorPage ? "ผู้ควบคุม" : "ผู้ใช้งาน"}
 					</Text>
 					<Text size="12px" weight="500" color="#B5B5C3">
 						{membersData.count} คน
@@ -139,57 +157,59 @@ function SearchBar({ membersData, filter, setFilter }: ISearchMember) {
 					size="md"
 					sx={{ flex: 0.75 }}
 					miw="150px"
-					onClick={() => download(csvConfig)(csv)}
+					onClick={() => handleExport()}
 				>
 					<Group spacing="xs" noWrap>
 						<IconFileExport size="1rem" />
-						<Text>นำออกไฟล์ csv</Text>
+						<Text>นำออกไฟล์ Excel</Text>
 					</Group>
 				</Button>
 			</Flex>
-			<Flex direction="column" mt="sm">
-				<Box>
-					<Text weight="500">ชนิดการสมัคร : </Text>
-					<Chip.Group multiple value={filter.flag} onChange={handleFlag}>
+			{!moderatorPage && (
+				<Flex direction="column" mt="sm">
+					<Box>
+						<Text weight="500">ชนิดการสมัคร : </Text>
+						<Chip.Group multiple value={filter.flag} onChange={handleFlag}>
+							<Group>
+								<Chip value="FOUND">พบในฐานข้อมูล</Chip>
+								<Chip value="EDIT">เปลี่ยนข้อมูล</Chip>
+								<Chip value="NOTFOUND">ไม่มีในฐานข้อมูล</Chip>
+							</Group>
+						</Chip.Group>
+					</Box>
+					<Box>
+						<Text weight="500">สถานะ : </Text>
+						<Chip.Group multiple value={filter.status} onChange={handleStatus}>
+							<Group>
+								<Chip value="Active">เปิดใช้งาน</Chip>
+								<Chip value="Inactive">ไม่เปิดใช้งาน</Chip>
+							</Group>
+						</Chip.Group>
+					</Box>
+					<Box>
+						<Text weight="500">ช่วงเวลา : </Text>
 						<Group>
-							<Chip value="FOUND">พบในฐานข้อมูล</Chip>
-							<Chip value="EDIT">เปลี่ยนข้อมูล</Chip>
-							<Chip value="NOTFOUND">ไม่มีในฐานข้อมูล</Chip>
+							<DateTimePicker
+								clearable
+								valueFormat="DD/MM/YYYY HH:mm A"
+								placeholder="Pick date and time"
+								value={filter.start}
+								onChange={handleStart}
+								maw={500}
+							/>
+							<Text>ถึง</Text>
+							<DateTimePicker
+								clearable
+								valueFormat="DD/MM/YYYY HH:mm A"
+								placeholder="Pick date and time"
+								value={filter.end}
+								onChange={handleEnd}
+								maw={500}
+							/>
 						</Group>
-					</Chip.Group>
-				</Box>
-				<Box>
-					<Text weight="500">สถานะ : </Text>
-					<Chip.Group multiple value={filter.status} onChange={handleStatus}>
-						<Group>
-							<Chip value="Active">เปิดใช้งาน</Chip>
-							<Chip value="Inactive">ไม่เปิดใช้งาน</Chip>
-						</Group>
-					</Chip.Group>
-				</Box>
-				<Box>
-					<Text weight="500">ช่วงเวลา : </Text>
-					<Group>
-						<DateTimePicker
-							clearable
-							valueFormat="DD/MM/YYYY HH:mm A"
-							placeholder="Pick date and time"
-							value={filter.start}
-							onChange={handleStart}
-							maw={500}
-						/>
-						<Text>ถึง</Text>
-						<DateTimePicker
-							clearable
-							valueFormat="DD/MM/YYYY HH:mm A"
-							placeholder="Pick date and time"
-							value={filter.end}
-							onChange={handleEnd}
-							maw={500}
-						/>
-					</Group>
-				</Box>
-			</Flex>
+					</Box>
+				</Flex>
+			)}
 		</>
 	);
 }

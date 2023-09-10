@@ -1,6 +1,7 @@
 import { Box, Button, Group, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Role, TUser } from "../../../../types";
+import { useUserDataContext } from "../../../../context/userData";
 
 interface IEditMember {
 	data: TUser | null;
@@ -15,6 +16,7 @@ interface IEditMember {
 }
 
 function EditForm({ data, handleSubmitEdit, setSeleted, close }: IEditMember) {
+	const { userData } = useUserDataContext();
 	const form = useForm({
 		initialValues: {
 			firstname: data?.firstname ?? "",
@@ -91,24 +93,26 @@ function EditForm({ data, handleSubmitEdit, setSeleted, close }: IEditMember) {
 					}}
 					{...form.getInputProps("tel")}
 				/>
-				<Select
-					mt="sm"
-					label="ตำแหน่ง"
-					placeholder="Pick one"
-					dropdownPosition="top"
-					styles={{
-						label: {
-							fontSize: "1.1rem",
-							fontWeight: 400,
-						},
-					}}
-					data={[
-						{ value: "ADMIN", label: "แอดมิน" },
-						{ value: "MODERATOR", label: "ผู้ควบคุม" },
-						{ value: "USER", label: "ผู้ใช้" },
-					]}
-					{...form.getInputProps("role")}
-				/>
+				{userData && userData.role === "ADMIN" && (
+					<Select
+						mt="sm"
+						label="ตำแหน่ง"
+						placeholder="Pick one"
+						dropdownPosition="top"
+						styles={{
+							label: {
+								fontSize: "1.1rem",
+								fontWeight: 400,
+							},
+						}}
+						data={[
+							{ value: "ADMIN", label: "แอดมิน" },
+							{ value: "MODERATOR", label: "ผู้ควบคุม" },
+							{ value: "USER", label: "ผู้ใช้" },
+						]}
+						{...form.getInputProps("role")}
+					/>
+				)}
 				<Group position="right" mt="md">
 					<Button
 						variant="outline"
