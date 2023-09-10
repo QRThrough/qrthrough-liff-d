@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import SignInPage from "../page/SignInPage";
 import UserPage from "../page/dashboard/members/UserPage";
-import LogPage from "../page/dashboard/logs/LogPage";
+import LogPage from "../page/dashboard/usageLogs/LogPage";
 import ModeratorPage from "../page/dashboard/members/ModeratorPage";
 import DashboardPage from "../page/dashboard/DashboardPage";
 import DashboardLayout from "../common/layout/DashboardLayout";
