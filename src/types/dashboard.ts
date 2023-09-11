@@ -1,15 +1,20 @@
 export type Role = "ADMIN" | "MODERATOR" | "USER";
 export type Flag = "FOUND" | "NOTFOUND" | "EDIT";
+export type Status = "Active" | "Inactive";
 
 export type TFilterType = "STUDENT CODE" | "TEL" | "NAME";
+export type Order = "STUDENT CODE" | "TEL" | "NAME" | "DATE";
+export type Sort = "ASC" | "DESC";
 
 export type TFilter = {
 	value: string;
 	type: TFilterType;
-	flag: string[];
-	status: string[];
+	flag: Flag[];
+	status: Status[];
 	start: Date;
 	end: Date;
+	order: Order;
+	sort: Sort;
 };
 
 export type TUser = {

@@ -4,7 +4,6 @@ import {
 	createStyles,
 	Card,
 	Flex,
-	BackgroundImage,
 	Box,
 	Text,
 	Image,
@@ -55,10 +54,10 @@ function SignInPage() {
 		<div className={classes.container}>
 			<Card className={classes.card} shadow="md" withBorder>
 				<Flex w="100%" h="100%">
-					<BackgroundImage
+					{/* <BackgroundImage
 						className={classes.sideImg}
 						src="https://img.freepik.com/free-photo/vertical-shot-river-surrounded-by-mountains-meadows-scotland_181624-27881.jpg?w=1060&t=st=1687287285~exp=1687287885~hmac=def88ea7ae350ebf096c97f177d74fd0f9dd3a5fd30c91351fcf05a45564e923"
-					/>
+					/> */}
 					<Group
 						maw="500px"
 						h="100%"
@@ -105,9 +104,12 @@ function SignInPage() {
 
 const useStyles = createStyles((theme) => ({
 	container: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "ghostwhite",
 		width: "100%",
-		height: "100%",
-		maxHeight: "80vh",
+		height: "100vh",
 
 		padding: "0 100px",
 
@@ -127,8 +129,8 @@ const useStyles = createStyles((theme) => ({
 		cursor: "pointer",
 	},
 	card: {
-		width: "100%",
-		height: "100%",
+		maxWidth: "max-content",
+		height: "70%",
 		padding: "0 !important",
 
 		background: "#FFF",

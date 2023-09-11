@@ -2,18 +2,16 @@ import { MRT_ColumnDef } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
 import TableComponent from "./component/TableComponent";
 import { useMutation, useQuery } from "react-query";
-import {
-	allLogsService,
-	deleteMemberService,
-} from "../../../service/dashboard";
+import { allLogsService, deleteLogService } from "../../../service/dashboard";
 import { IResLogResponse, TFilter, TLog } from "../../../types";
-import { Box, Flex, Text } from "@mantine/core";
+import { Flex, Group } from "@mantine/core";
 import dayjs from "dayjs";
 import liff from "@line/liff";
 import { useUserDataContext } from "../../../context/userData";
 import { notifications } from "@mantine/notifications";
 import SearchBar from "./component/SearchBar";
 import { modals } from "@mantine/modals";
+import { IconUser, IconUserCog, IconUserStar } from "@tabler/icons-react";
 
 function LogPage() {
 	const { setUserData } = useUserDataContext();
@@ -21,18 +19,18 @@ function LogPage() {
 		logs: [],
 		count: 0,
 	});
-	const currentDate = new Date(); // Get the current date
-	currentDate.setDate(currentDate.getDate() - 30);
 
 	const [filter, setFilter] = useState<TFilter>({
 		value: "",
 		type: "STUDENT CODE",
 		flag: [],
 		status: [],
-		start: currentDate,
+		start: new Date(),
 		end: new Date(),
+		order: "DATE",
+		sort: "DESC",
 	});
-	const { data, error, refetch } = useQuery(
+	const { refetch } = useQuery(
 		["all-logs-service", filter],
 		() => {
 			return allLogsService(filter);
@@ -40,32 +38,40 @@ function LogPage() {
 		{
 			cacheTime: 5000,
 			staleTime: 10000,
+			onSuccess(data) {
+				const result = data.data.result ?? { logs: [], count: 0 };
+				const logs = result.logs.filter((e) => {
+					const date = new Date(dayjs(e.created_at).utc().toString());
+
+					return date >= filter.start && date <= filter.end;
+				});
+				setLogsData({
+					logs: logs,
+					count: logs.length,
+				});
+			},
 			onError: () => {
 				if (!liff.isLoggedIn) setUserData(null);
 			},
 		}
 	);
 
-	useMemo(() => {
-		if (error) console.error(`Error fetching all-users-service: ${error}`);
-		const result = data?.data.result ?? { logs: [], count: 0 };
-		const logs = result.logs.filter((e) => {
-			const date = new Date(dayjs(e.created_at).utc().toString());
-
-			return date >= filter.start && date <= filter.end;
-		});
-
-		setLogsData({
-			logs: logs,
-			count: logs.length,
-		});
-	}, [data, error, filter]);
-
 	useEffect(() => {
-		setFilter((prev) => ({ ...prev, value: "" }));
+		const currentDate = new Date();
+		currentDate.setHours(23, 59);
+
+		const prevDate = new Date(); // Get the current date
+		prevDate.setMonth(currentDate.getMonth() - 1);
+		prevDate.setHours(23, 59);
+		setFilter((prev) => ({
+			...prev,
+			value: "",
+			start: prevDate,
+			end: currentDate,
+		}));
 	}, [filter.type]);
 
-	const { mutateAsync: delMutate } = useMutation(deleteMemberService, {
+	const { mutateAsync: delMutate } = useMutation(deleteLogService, {
 		onMutate() {
 			notifications.show({
 				color: "blue",
@@ -100,19 +106,13 @@ function LogPage() {
 		() => [
 			{
 				accessorKey: "account.student_code",
-				header: "ชื่อ / รหัสนักศึกษา",
-				Cell: ({ cell, row }) => (
-					<Box>
-						<Text size={14} weight="600" color="#464E5F">
-							{row.original.account.firstname +
-								" " +
-								row.original.account.lastname}
-						</Text>
-						<Text size={14} weight="500" color="#464E5F">
-							<>{cell.getValue() ?? ""}</>
-						</Text>
-					</Box>
-				),
+				header: "รหัสนักศึกษา",
+			},
+			{
+				accessorKey: "account.firstname",
+				header: "ชื่อ - นามสกุล",
+				Cell: ({ row }) =>
+					row.original.account.firstname + " " + row.original.account.lastname,
 			},
 			{
 				accessorKey: "account.tel",
@@ -126,11 +126,26 @@ function LogPage() {
 						{(() => {
 							switch (cell.getValue()) {
 								case "ADMIN":
-									return <Text>แอดมิน</Text>;
+									return (
+										<Group>
+											<IconUserStar />
+											แอดมิน
+										</Group>
+									);
 								case "MODERATOR":
-									return <Text>ผู้ควบคุม</Text>;
+									return (
+										<Group>
+											<IconUserCog />
+											ผู้ควบคุม
+										</Group>
+									);
 								case "USER":
-									return <Text>ผู้ใช้</Text>;
+									return (
+										<Group>
+											<IconUser />
+											ผู้ใช้
+										</Group>
+									);
 								default:
 									return <></>;
 							}

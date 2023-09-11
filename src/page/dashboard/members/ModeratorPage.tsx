@@ -8,7 +8,7 @@ import {
 	updateModeratorService,
 } from "../../../service/dashboard";
 import { IResUserResponse, Role, TFilter, TUser } from "../../../types";
-import { Box, Center, Flex, Modal, Switch, Text, px } from "@mantine/core";
+import { Center, Flex, Group, Modal, Switch, px } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import liff from "@line/liff";
 import { useUserDataContext } from "../../../context/userData";
@@ -16,6 +16,7 @@ import { notifications } from "@mantine/notifications";
 import SearchBar from "./component/SearchBar";
 import EditForm from "./component/EditForm";
 import { modals } from "@mantine/modals";
+import { IconUser, IconUserCog, IconUserStar } from "@tabler/icons-react";
 
 function ModeratorPage() {
 	const [opened, { open, close }] = useDisclosure(false);
@@ -24,19 +25,19 @@ function ModeratorPage() {
 		users: [],
 		count: 0,
 	});
-	const currentDate = new Date(); // Get the current date
-	currentDate.setDate(currentDate.getDate() - 30);
 
 	const [filter, setFilter] = useState<TFilter>({
 		value: "",
 		type: "STUDENT CODE",
 		flag: ["FOUND", "NOTFOUND", "EDIT"],
 		status: ["Active", "Inactive"],
-		start: currentDate,
+		start: new Date(),
 		end: new Date(),
+		order: "STUDENT CODE",
+		sort: "ASC",
 	});
-	const { data, error, refetch } = useQuery(
-		["all-members-service", filter],
+	const { refetch } = useQuery(
+		["all-moderators-service", filter],
 		() => {
 			return allModeratorsService(filter);
 		},
@@ -46,23 +47,32 @@ function ModeratorPage() {
 			onError: () => {
 				if (!liff.isLoggedIn) setUserData(null);
 			},
+			onSuccess(data) {
+				const result = data.data.result ?? { users: [], count: 0 };
+				const members = result.users;
+
+				setMembersData({
+					users: members,
+					count: members.length,
+				});
+			},
 		}
 	);
 	const [seletedMember, setSeletedMember] = useState<TUser | null>(null);
 
-	useMemo(() => {
-		if (error) console.error(`Error fetching all-moderators-service: ${error}`);
-		const result = data?.data.result ?? { users: [], count: 0 };
-		const members = result.users;
-
-		setMembersData({
-			users: members,
-			count: members.length,
-		});
-	}, [data, error]);
-
 	useEffect(() => {
-		setFilter((prev) => ({ ...prev, value: "" }));
+		const currentDate = new Date();
+		currentDate.setHours(23, 59);
+
+		const prevDate = new Date(); // Get the current date
+		prevDate.setMonth(currentDate.getMonth() - 1);
+		prevDate.setHours(23, 59);
+		setFilter((prev) => ({
+			...prev,
+			value: "",
+			start: prevDate,
+			end: currentDate,
+		}));
 	}, [filter.type]);
 
 	const { mutateAsync } = useMutation(updateModeratorService, {
@@ -152,17 +162,12 @@ function ModeratorPage() {
 		() => [
 			{
 				accessorKey: "student_code",
-				header: "ชื่อ / รหัสนักศึกษา",
-				Cell: ({ cell, row }) => (
-					<Box>
-						<Text size={14} weight="600" color="#464E5F">
-							{row.original.firstname + " " + row.original.lastname}
-						</Text>
-						<Text size={14} weight="500" color="#464E5F">
-							<>{cell.getValue() ?? ""}</>
-						</Text>
-					</Box>
-				),
+				header: "รหัสนักศึกษา",
+			},
+			{
+				accessorKey: "firstname",
+				header: "ชื่อ - นามสกุล",
+				Cell: ({ row }) => row.original.firstname + " " + row.original.lastname,
 			},
 			{
 				accessorKey: "tel",
@@ -176,11 +181,26 @@ function ModeratorPage() {
 						{(() => {
 							switch (cell.getValue()) {
 								case "ADMIN":
-									return <Text>แอดมิน</Text>;
+									return (
+										<Group>
+											<IconUserStar />
+											แอดมิน
+										</Group>
+									);
 								case "MODERATOR":
-									return <Text>ผู้ควบคุม</Text>;
+									return (
+										<Group>
+											<IconUserCog />
+											ผู้ควบคุม
+										</Group>
+									);
 								case "USER":
-									return <Text>ผู้ใช้</Text>;
+									return (
+										<Group>
+											<IconUser />
+											ผู้ใช้
+										</Group>
+									);
 								default:
 									return <></>;
 							}

@@ -1,9 +1,14 @@
 import { fetchPrivate } from ".";
 import { IResLogResponse, IResUserResponse, IResponse, TUser } from "../types";
 
-export const allMembersService = async ({ type = "", value = "" }) => {
+export const allMembersService = async ({
+	type = "",
+	value = "",
+	order = "STUDENT CODE",
+	sort = "ASC",
+}) => {
 	return await fetchPrivate.get<IResponse<IResUserResponse>>(
-		`/users?type=${type}&value=${value}`
+		`/users?type=${type}&value=${value}&order=${order}&sort=${sort}`
 	);
 };
 
@@ -35,9 +40,14 @@ export const deleteModeratorService = async (id: number) => {
 	return await fetchPrivate.delete(`/moderators/${id}`);
 };
 
-export const allLogsService = async ({ type = "", value = "" }) => {
+export const allLogsService = async ({
+	type = "",
+	value = "",
+	order = "STUDENT CODE",
+	sort = "ASC",
+}) => {
 	return await fetchPrivate.get<IResponse<IResLogResponse>>(
-		`/logs?type=${type}&value=${value}`
+		`/logs?type=${type}&value=${value}&order=${order}&sort=${sort}`
 	);
 };
 

@@ -19,7 +19,7 @@ function TableComponent({
 }: ITableMember) {
 	const { userData } = useUserDataContext();
 	return (
-		<Box mt="xl" sx={{ height: "100%", overflowY: "scroll" }}>
+		<Box mt="xl" sx={{ overflowY: "scroll" }}>
 			<MantineReactTable
 				columns={columns}
 				data={data}
@@ -27,7 +27,7 @@ function TableComponent({
 				positionActionsColumn="last"
 				enableColumnFilters={false}
 				enablePagination
-				enableSorting
+				enableSorting={false}
 				enableColumnActions={false}
 				enableTopToolbar={false}
 				renderRowActions={({ row }) => (

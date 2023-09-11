@@ -13,29 +13,27 @@ interface ITableMember {
 function TableComponent({ columns, data, deleteAction }: ITableMember) {
 	const { userData } = useUserDataContext();
 	return (
-		<Box mt="xl" sx={{ height: "100%", overflowY: "scroll" }}>
+		<Box mt="xl" sx={{ overflowY: "scroll" }}>
 			<MantineReactTable
 				columns={columns}
 				data={data}
-				enableEditing
+				enableEditing={userData?.role === "ADMIN"}
 				positionActionsColumn="last"
 				enableColumnFilters={false}
 				enablePagination
-				enableSorting
+				enableSorting={false}
 				enableColumnActions={false}
 				enableTopToolbar={false}
 				renderRowActions={({ row }) => (
 					<Box sx={{ display: "flex", gap: "16px" }}>
-						{userData && userData.role === "ADMIN" && (
-							<Tooltip position="right" label="Delete">
-								<ActionIcon
-									color="red"
-									onClick={() => deleteAction(row.original.id)}
-								>
-									<IconTrashFilled />
-								</ActionIcon>
-							</Tooltip>
-						)}
+						<Tooltip position="right" label="Delete">
+							<ActionIcon
+								color="red"
+								onClick={() => deleteAction(row.original.id)}
+							>
+								<IconTrashFilled />
+							</ActionIcon>
+						</Tooltip>
 					</Box>
 				)}
 				mantineTableProps={{

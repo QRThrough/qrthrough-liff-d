@@ -5,8 +5,6 @@ import {
 	createStyles,
 	getStylesRef,
 	rem,
-	Flex,
-	Card,
 	AppShell,
 	Burger,
 	Header,
@@ -60,7 +58,7 @@ function DashboardLayout() {
 
 	return (
 		<AppShell
-			bg="dark"
+			bg="white"
 			header={
 				width < breakpointPixel ? (
 					<Header height={{ base: 50 }} p="md">
@@ -118,7 +116,7 @@ function DashboardLayout() {
 				</Navbar>
 			}
 		>
-			<Flex w="100%" h="100%" px="50px">
+			{/* <Flex w="100%" h="100%" px="50px">
 				<Card
 					w="100%"
 					p="2rem"
@@ -129,7 +127,8 @@ function DashboardLayout() {
 				>
 					<Outlet />
 				</Card>
-			</Flex>
+			</Flex> */}
+			<Outlet />
 		</AppShell>
 	);
 }

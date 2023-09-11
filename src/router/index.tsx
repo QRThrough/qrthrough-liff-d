@@ -11,7 +11,6 @@ import LogPage from "../page/dashboard/usageLogs/LogPage";
 import ModeratorPage from "../page/dashboard/members/ModeratorPage";
 import DashboardPage from "../page/dashboard/DashboardPage";
 import DashboardLayout from "../common/layout/DashboardLayout";
-import PageLayout from "../common/layout/PageLayout";
 import { TuserData } from "../types";
 import { useUserDataContext } from "../context/userData";
 import liff from "@line/liff";
@@ -43,9 +42,7 @@ const Router = () => {
 					index
 					element={
 						<AuthRoute user={userData} redirectPath="/dashboard">
-							<PageLayout isCenter maxWidth="1440px">
-								<SignInPage />
-							</PageLayout>
+							<SignInPage />
 						</AuthRoute>
 					}
 				/>

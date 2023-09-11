@@ -9,8 +9,16 @@ import {
 	Select,
 } from "@mantine/core";
 import { IconFileExport, IconSearch } from "@tabler/icons-react";
-import { IResUserResponse, TFilter, TFilterType } from "../../../../types";
-import { DateTimePicker } from "@mantine/dates";
+import {
+	Flag,
+	IResUserResponse,
+	Order,
+	Sort,
+	Status,
+	TFilter,
+	TFilterType,
+} from "../../../../types";
+import { DateInput } from "@mantine/dates";
 import dayjs from "dayjs";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -65,22 +73,36 @@ function SearchBar({
 		const data = new Blob([excelBuffer], { type: fileType });
 		FileSaver.saveAs(
 			data,
-			`${moderatorPage ? "Moderators" : "Users"}` + new Date() + fileExtension
+			`${moderatorPage ? "Moderators " : "Users "}` + new Date() + fileExtension
 		);
 	};
 
 	// Converts your Array<Object> to a CsvOutput string based on the configs
 
-	const handleFlag = (flag: string[]) => {
+	const handleFlag = (flag: Flag[]) => {
 		setFilter((prev: TFilter) => {
 			const curr = { ...prev, flag: flag };
 			return curr;
 		});
 	};
 
-	const handleStatus = (status: string[]) => {
+	const handleStatus = (status: Status[]) => {
 		setFilter((prev: TFilter) => {
 			const curr = { ...prev, status: status };
+			return curr;
+		});
+	};
+
+	const handleOrder = (order: Order) => {
+		setFilter((prev: TFilter) => {
+			const curr = { ...prev, order: order };
+			return curr;
+		});
+	};
+
+	const handleSort = (sort: Sort) => {
+		setFilter((prev: TFilter) => {
+			const curr = { ...prev, sort: sort };
 			return curr;
 		});
 	};
@@ -102,9 +124,9 @@ function SearchBar({
 	return (
 		<>
 			<Flex justify="space-between" align="center" gap="2rem">
-				<Box sx={{ flex: 0.5 }} miw="100px">
+				<Box sx={{ flex: 0.5 }} miw="150px">
 					<Text size="20px" weight="600">
-						{moderatorPage ? "ผู้ควบคุม" : "ผู้ใช้งาน"}
+						{moderatorPage ? "ผู้ดูแล" : "ผู้ใช้งาน"}
 					</Text>
 					<Text size="12px" weight="500" color="#B5B5C3">
 						{membersData.count} คน
@@ -112,7 +134,7 @@ function SearchBar({
 				</Box>
 
 				<Input
-					miw="600px"
+					miw="300px"
 					value={filter.value}
 					onChange={(e) => {
 						setFilter((prev) => ({ ...prev, value: e.target.value }));
@@ -167,7 +189,7 @@ function SearchBar({
 			</Flex>
 			{!moderatorPage && (
 				<Flex direction="column" mt="sm">
-					<Box>
+					<Flex align="center" gap="md">
 						<Text weight="500">ชนิดการสมัคร : </Text>
 						<Chip.Group multiple value={filter.flag} onChange={handleFlag}>
 							<Group>
@@ -176,8 +198,8 @@ function SearchBar({
 								<Chip value="NOTFOUND">ไม่มีในฐานข้อมูล</Chip>
 							</Group>
 						</Chip.Group>
-					</Box>
-					<Box>
+					</Flex>
+					<Flex align="center" gap="md" mt="sm">
 						<Text weight="500">สถานะ : </Text>
 						<Chip.Group multiple value={filter.status} onChange={handleStatus}>
 							<Group>
@@ -185,29 +207,47 @@ function SearchBar({
 								<Chip value="Inactive">ไม่เปิดใช้งาน</Chip>
 							</Group>
 						</Chip.Group>
-					</Box>
-					<Box>
+					</Flex>
+					<Flex align="center" gap="md" mt="sm">
+						<Text weight="500">เรียงโดย : </Text>
+						<Group>
+							<Chip.Group value={filter.order} onChange={handleOrder}>
+								<Group>
+									<Chip value="STUDENT CODE">รหัสนักศีกษา</Chip>
+									<Chip value="NAME">ชื่อ</Chip>
+									<Chip value="TEL">เบอร์</Chip>
+									<Chip value="DATE">วัน - เวลา</Chip>
+								</Group>
+							</Chip.Group>
+							<Select
+								value={filter.sort}
+								onChange={handleSort}
+								sx={{ maxWidth: "6rem" }}
+								data={[
+									{ value: "ASC", label: "ASC" },
+									{ value: "DESC", label: "DESC" },
+								]}
+							/>
+						</Group>
+					</Flex>
+					<Flex align="center" gap="md" mt="sm">
 						<Text weight="500">ช่วงเวลา : </Text>
 						<Group>
-							<DateTimePicker
-								clearable
-								valueFormat="DD/MM/YYYY HH:mm A"
+							<DateInput
 								placeholder="Pick date and time"
 								value={filter.start}
 								onChange={handleStart}
 								maw={500}
 							/>
 							<Text>ถึง</Text>
-							<DateTimePicker
-								clearable
-								valueFormat="DD/MM/YYYY HH:mm A"
+							<DateInput
 								placeholder="Pick date and time"
 								value={filter.end}
 								onChange={handleEnd}
 								maw={500}
 							/>
 						</Group>
-					</Box>
+					</Flex>
 				</Flex>
 			)}
 		</>

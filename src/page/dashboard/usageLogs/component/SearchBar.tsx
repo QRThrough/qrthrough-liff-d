@@ -1,10 +1,25 @@
-import { Group, Box, Text, Input, Button, Flex, Select } from "@mantine/core";
+import {
+	Group,
+	Box,
+	Text,
+	Input,
+	Button,
+	Flex,
+	Select,
+	Chip,
+} from "@mantine/core";
 import { IconFileExport, IconSearch } from "@tabler/icons-react";
-import { IResLogResponse, TFilter, TFilterType } from "../../../../types";
+import {
+	IResLogResponse,
+	Order,
+	Sort,
+	TFilter,
+	TFilterType,
+} from "../../../../types";
 import dayjs from "dayjs";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
-import { DateTimePicker } from "@mantine/dates";
+import { DateInput } from "@mantine/dates";
 
 interface ISearchLog {
 	logsData: IResLogResponse;
@@ -48,7 +63,21 @@ function SearchBar({ logsData, filter, setFilter }: ISearchLog) {
 		const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
 		const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
 		const data = new Blob([excelBuffer], { type: fileType });
-		FileSaver.saveAs(data, "Log" + new Date() + fileExtension);
+		FileSaver.saveAs(data, "Log " + new Date() + fileExtension);
+	};
+
+	const handleOrder = (order: Order) => {
+		setFilter((prev: TFilter) => {
+			const curr = { ...prev, order: order };
+			return curr;
+		});
+	};
+
+	const handleSort = (sort: Sort) => {
+		setFilter((prev: TFilter) => {
+			const curr = { ...prev, sort: sort };
+			return curr;
+		});
 	};
 
 	const handleStart = (date: Date) => {
@@ -68,7 +97,7 @@ function SearchBar({ logsData, filter, setFilter }: ISearchLog) {
 	return (
 		<>
 			<Flex justify="space-between" align="center" gap="2rem">
-				<Box sx={{ flex: 0.5 }} miw="100px">
+				<Box sx={{ flex: 0.5 }} miw="150px">
 					<Text size="20px" weight="600">
 						ประวัติการใช้งาน
 					</Text>
@@ -78,7 +107,7 @@ function SearchBar({ logsData, filter, setFilter }: ISearchLog) {
 				</Box>
 
 				<Input
-					miw="600px"
+					miw="300px"
 					value={filter.value}
 					onChange={(e) => {
 						setFilter((prev) => ({ ...prev, value: e.target.value }));
@@ -131,22 +160,40 @@ function SearchBar({ logsData, filter, setFilter }: ISearchLog) {
 					</Group>
 				</Button>
 			</Flex>
+			<Flex align="center" gap="md" mt="sm">
+				<Text weight="500">เรียงโดย : </Text>
+				<Group>
+					<Chip.Group value={filter.order} onChange={handleOrder}>
+						<Group>
+							<Chip value="STUDENT CODE">รหัสนักศีกษา</Chip>
+							<Chip value="NAME">ชื่อ</Chip>
+							<Chip value="TEL">เบอร์</Chip>
+							<Chip value="DATE">วัน - เวลา</Chip>
+						</Group>
+					</Chip.Group>
+					<Select
+						value={filter.sort}
+						onChange={handleSort}
+						sx={{ maxWidth: "6rem" }}
+						data={[
+							{ value: "ASC", label: "ASC" },
+							{ value: "DESC", label: "DESC" },
+						]}
+					/>
+				</Group>
+			</Flex>
 			<Flex direction="column" mt="sm">
 				<Box>
 					<Text weight="500">ช่วงเวลา : </Text>
 					<Group>
-						<DateTimePicker
-							clearable
-							valueFormat="DD/MM/YYYY HH:mm A"
+						<DateInput
 							placeholder="Pick date and time"
 							value={filter.start}
 							onChange={handleStart}
 							maw={500}
 						/>
 						<Text>ถึง</Text>
-						<DateTimePicker
-							clearable
-							valueFormat="DD/MM/YYYY HH:mm A"
+						<DateInput
 							placeholder="Pick date and time"
 							value={filter.end}
 							onChange={handleEnd}
