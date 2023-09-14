@@ -18,11 +18,9 @@ import EditTime from "../EditTime";
 function DashboardPage() {
 	const [opened, { open, close }] = useDisclosure(false);
 	const { setUserData } = useUserDataContext();
-	const [controller, setController] = useState<TController>({
-		power: true,
-		openTime: "00:00",
-		closeTime: "00:00",
-	});
+	const [controller, setController] = useState<TController | undefined>(
+		undefined
+	);
 
 	const { status, refetch } = useQuery(
 		"get-dashboard-service",
@@ -30,19 +28,11 @@ function DashboardPage() {
 			return getDashboardService();
 		},
 		{
-			cacheTime: 5000,
-			staleTime: 10000,
 			onError: () => {
 				if (!liff.isLoggedIn) setUserData(null);
 			},
 			onSuccess(data) {
-				setController(
-					data.data.result ?? {
-						power: true,
-						openTime: "00:00",
-						closeTime: "00:00",
-					}
-				);
+				setController(data.data.result);
 			},
 		}
 	);
@@ -77,6 +67,7 @@ function DashboardPage() {
 			title: "ยืนยันการปรับเปลี่ยนสถานะระบบ",
 			labels: { confirm: "ยืนยัน", cancel: "ยกเลิก" },
 			onConfirm: () => {
+				if (!controller) return;
 				mutateAsync({
 					openTime: controller.openTime,
 					closeTime: controller.closeTime,
@@ -86,72 +77,75 @@ function DashboardPage() {
 		});
 
 	const handleChangeTime = (value: { openTime: string; closeTime: string }) => {
+		if (!controller) return;
 		mutateAsync({ power: controller.power, ...value });
 	};
 
 	return (
 		<>
-			<Modal
-				opened={opened}
-				onClose={() => {
-					close();
-				}}
-				title={"ปรับเปลี่ยนเวลาเปิด"}
-			>
-				<EditTime
-					data={controller}
-					handleChangeTime={handleChangeTime}
-					close={close}
-				/>
-			</Modal>
-			{status === "success" ? (
-				<Flex direction="column" gap="2rem">
-					<Box sx={{ flex: 0.5 }} miw="150px">
-						<Text size="20px" weight="600">
-							แดชบอร์ด
-						</Text>
-					</Box>
-					<Card h="100%" shadow="md" padding="xl">
-						<Text weight={500} size="lg">
-							แผงควบคุม
-						</Text>
-						<Box mt="md">
-							<Text weight="500">เปิด - ปิด ระบบ : </Text>
-							<Switch
-								onLabel="ON"
-								offLabel="OFF"
-								size="xl"
-								mt="sm"
-								checked={controller.power}
-								onChange={(e) => {
-									statusModal(e.target.checked);
-								}}
-							/>
+			{status === "success" && controller != undefined ? (
+				<>
+					<Modal
+						opened={opened}
+						onClose={() => {
+							close();
+						}}
+						title={"ปรับเปลี่ยนเวลาเปิด"}
+					>
+						<EditTime
+							data={controller}
+							handleChangeTime={handleChangeTime}
+							close={close}
+						/>
+					</Modal>
+					<Flex direction="column" gap="2rem">
+						<Box sx={{ flex: 0.5 }} miw="150px">
+							<Text size="20px" weight="600">
+								แดชบอร์ด
+							</Text>
 						</Box>
-
-						<Flex direction="column" mt="sm">
-							<Text weight="500">ช่วงเวลาเปิด :</Text>
-							<Group mt="sm">
-								<TimeInput
-									readOnly
-									w="min-content"
-									value={controller.openTime}
-									withAsterisk
-								/>{" "}
-								<Text weight={400} size="md">
-									ถึง
-								</Text>
-								<TimeInput
-									readOnly
-									w="min-content"
-									value={controller.closeTime}
-									withAsterisk
+						<Card h="100%" shadow="md" padding="xl">
+							<Text weight={500} size="lg">
+								แผงควบคุม
+							</Text>
+							<Box mt="md">
+								<Text weight="500">เปิด - ปิด ระบบ : </Text>
+								<Switch
+									onLabel="ON"
+									offLabel="OFF"
+									size="xl"
+									mt="sm"
+									checked={controller.power}
+									onChange={(e) => {
+										statusModal(e.target.checked);
+									}}
 								/>
-								<IconEdit onClick={open} />
-							</Group>
-						</Flex>
-					</Card>
-				</Flex>
+							</Box>
+
+							<Flex direction="column" mt="sm">
+								<Text weight="500">ช่วงเวลาเปิด :</Text>
+								<Group mt="sm">
+									<TimeInput
+										readOnly
+										w="min-content"
+										value={controller.openTime}
+										withAsterisk
+									/>{" "}
+									<Text weight={400} size="md">
+										ถึง
+									</Text>
+									<TimeInput
+										readOnly
+										w="min-content"
+										value={controller.closeTime}
+										withAsterisk
+									/>
+									<IconEdit onClick={open} />
+								</Group>
+							</Flex>
+						</Card>
+					</Flex>
+				</>
 			) : (
 				<Text size="14px" color="#59151E">
 					Loading dashboard controller data.
