@@ -48,3 +48,9 @@ export interface IResLogResponse {
 	count: number;
 	logs: TLog[];
 }
+
+export type TController = {
+	power: boolean;
+	openTime: string;
+	closeTime: string;
+};

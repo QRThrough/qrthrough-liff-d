@@ -1,5 +1,11 @@
 import { fetchPrivate } from ".";
-import { IResLogResponse, IResUserResponse, IResponse, TUser } from "../types";
+import {
+	IResLogResponse,
+	IResUserResponse,
+	IResponse,
+	TController,
+	TUser,
+} from "../types";
 
 export const allMembersService = async ({
 	type = "",
@@ -53,4 +59,12 @@ export const allLogsService = async ({
 
 export const deleteLogService = async (id: number) => {
 	return await fetchPrivate.delete(`/logs/${id}`);
+};
+
+export const getDashboardService = async () => {
+	return await fetchPrivate.get<IResponse<TController>>(`/controller`);
+};
+
+export const updateDashboardService = async (payload: TController) => {
+	return await fetchPrivate.put<TController>(`/controller`, payload);
 };
