@@ -104,7 +104,7 @@ function DashboardPage() {
 					close={close}
 				/>
 			</Modal>
-			{status ? (
+			{status === "success" ? (
 				<Flex direction="column" gap="2rem">
 					<Box sx={{ flex: 0.5 }} miw="150px">
 						<Text size="20px" weight="600">
