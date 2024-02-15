@@ -41,7 +41,7 @@ function TableComponent({
 							<Tooltip position="right" label="Delete">
 								<ActionIcon
 									color="red"
-									onClick={() => deleteAction(row.original.id)}
+									onClick={() => deleteAction(row.original.account_id)}
 								>
 									<IconTrashFilled />
 								</ActionIcon>

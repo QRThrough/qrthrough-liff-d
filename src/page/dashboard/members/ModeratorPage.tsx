@@ -161,7 +161,7 @@ function ModeratorPage() {
 		//column definitions...
 		() => [
 			{
-				accessorKey: "student_code",
+				accessorKey: "account_id",
 				header: "รหัสนักศึกษา",
 			},
 			{

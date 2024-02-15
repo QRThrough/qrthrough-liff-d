@@ -171,7 +171,7 @@ function UserPage() {
 		//column definitions...
 		() => [
 			{
-				accessorKey: "student_code",
+				accessorKey: "account_id",
 				header: "รหัสนักศึกษา",
 			},
 			{

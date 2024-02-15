@@ -52,7 +52,7 @@ function SearchBar({
 				break;
 		}
 		return {
-			["รหัสนักศึกษา"]: e.student_code,
+			["รหัสนักศึกษา"]: e.account_id,
 			["ชื่อ"]: e.firstname,
 			["นามสกุล"]: e.lastname,
 			["เบอร์"]: String(e.tel),

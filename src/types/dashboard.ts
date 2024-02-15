@@ -18,9 +18,8 @@ export type TFilter = {
 };
 
 export type TUser = {
-	id: number;
+	account_id: number;
 	line_id: string;
-	student_code: number;
 	firstname: string;
 	lastname: string;
 	tel: string;
@@ -50,7 +49,7 @@ export interface IResLogResponse {
 }
 
 export type TController = {
-	power: boolean;
-	openTime: string;
-	closeTime: string;
+	key: string;
+	value: string;
+	desc: string;
 };

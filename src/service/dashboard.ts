@@ -19,10 +19,10 @@ export const allMembersService = async ({
 };
 
 export const updateMemberService = async ({
-	id,
+	account_id,
 	...payload
-}: TUser & { id: number }) => {
-	return await fetchPrivate.put<TUser>(`/users/${id}`, payload);
+}: TUser) => {
+	return await fetchPrivate.put<TUser>(`/users/${account_id}`, payload);
 };
 
 export const deleteMemberService = async (id: number) => {
@@ -36,10 +36,10 @@ export const allModeratorsService = async ({ type = "", value = "" }) => {
 };
 
 export const updateModeratorService = async ({
-	id,
+	account_id,
 	...payload
-}: TUser & { id: number }) => {
-	return await fetchPrivate.put<TUser>(`/moderators/${id}`, payload);
+}: TUser) => {
+	return await fetchPrivate.put<TUser>(`/moderators/${account_id}`, payload);
 };
 
 export const deleteModeratorService = async (id: number) => {
@@ -57,14 +57,14 @@ export const allLogsService = async ({
 	);
 };
 
-export const deleteLogService = async (id: number) => {
-	return await fetchPrivate.delete(`/logs/${id}`);
-};
+// export const deleteLogService = async (id: number) => {
+// 	return await fetchPrivate.delete(`/logs/${id}`);
+// };
 
 export const getDashboardService = async () => {
-	return await fetchPrivate.get<IResponse<TController>>(`/controller`);
+	return await fetchPrivate.get<IResponse<TController[]>>(`/configurations`);
 };
 
-export const updateDashboardService = async (payload: TController) => {
-	return await fetchPrivate.put<TController>(`/controller`, payload);
+export const updateDashboardService = async (payload: TController[]) => {
+	return await fetchPrivate.put<TController[]>(`/configurations`, payload);
 };

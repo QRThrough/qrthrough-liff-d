@@ -4,7 +4,7 @@ import { useForm } from "@mantine/form";
 import { TController } from "../types";
 
 interface IEditTime {
-	data: TController | null;
+	data: TController[] | null;
 	handleChangeTime: (value: { openTime: string; closeTime: string }) => void;
 	close: () => void;
 }
@@ -12,8 +12,8 @@ interface IEditTime {
 function EditTime({ data, handleChangeTime, close }: IEditTime) {
 	const form = useForm({
 		initialValues: {
-			openTime: data?.openTime ?? "00:00",
-			closeTime: data?.closeTime ?? "00:00",
+			openTime: data?.filter((e) => e.key === "Open")[0].value ?? "00:00",
+			closeTime: data?.filter((e) => e.key === "Close")[0].value ?? "00:00",
 		},
 
 		validate: {

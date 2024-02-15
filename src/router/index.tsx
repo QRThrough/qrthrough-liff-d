@@ -23,13 +23,13 @@ interface ICustomRoute {
 
 const AuthRoute = ({ user, redirectPath, children }: ICustomRoute) => {
 	if (!user || user.role === "USER" || !liff.isLoggedIn()) return children;
-	//if (!user || user.role === "USER") return children;
+	// if (!user || user.role === "USER") return children;
 	return <Navigate to={redirectPath} replace />;
 };
 
 const ProtectRoute = ({ user, redirectPath, children }: ICustomRoute) => {
 	if (user && user.role !== "USER" && liff.isLoggedIn()) return children;
-	//if (user && user.role !== "USER") return children;
+	// if (user && user.role !== "USER") return children;
 	return <Navigate to={redirectPath} replace />;
 };
 

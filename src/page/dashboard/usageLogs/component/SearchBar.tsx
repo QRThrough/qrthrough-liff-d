@@ -44,7 +44,7 @@ function SearchBar({ logsData, filter, setFilter }: ISearchLog) {
 				break;
 		}
 		return {
-			["รหัสนักศึกษา"]: e.account.student_code,
+			["รหัสนักศึกษา"]: e.account.account_id,
 			["ชื่อ"]: e.account.firstname,
 			["นามสกุล"]: e.account.lastname,
 			["เบอร์"]: String(e.account.tel),

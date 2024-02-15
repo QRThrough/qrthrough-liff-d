@@ -49,7 +49,7 @@ function EditForm({ data, handleSubmitEdit, setSeleted, close }: IEditMember) {
 							fontWeight: 400,
 						},
 					}}
-					value={data?.student_code ?? ""}
+					value={data?.account_id ?? ""}
 				/>
 				<TextInput
 					mt="sm"

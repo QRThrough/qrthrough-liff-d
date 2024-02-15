@@ -1,16 +1,14 @@
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
 import TableComponent from "./component/TableComponent";
-import { useMutation, useQuery } from "react-query";
-import { allLogsService, deleteLogService } from "../../../service/dashboard";
+import { useQuery } from "react-query";
+import { allLogsService } from "../../../service/dashboard";
 import { IResLogResponse, TFilter, TLog } from "../../../types";
 import { Flex, Group } from "@mantine/core";
 import dayjs from "dayjs";
 import liff from "@line/liff";
 import { useUserDataContext } from "../../../context/userData";
-import { notifications } from "@mantine/notifications";
 import SearchBar from "./component/SearchBar";
-import { modals } from "@mantine/modals";
 import { IconUser, IconUserCog, IconUserStar } from "@tabler/icons-react";
 
 function LogPage() {
@@ -71,41 +69,41 @@ function LogPage() {
 		}));
 	}, [filter.type]);
 
-	const { mutateAsync: delMutate } = useMutation(deleteLogService, {
-		onMutate() {
-			notifications.show({
-				color: "blue",
-				message: "กำลังอัพเดตข้อมูล",
-			});
-		},
-		onSuccess() {
-			notifications.show({
-				color: "green",
-				message: "อัพเดตข้อมูลสำเร็จ",
-			});
-			refetch();
-		},
-		onError() {
-			notifications.show({
-				color: "red",
-				message: "อัพเดตข้อมูลล้มเหลว",
-			});
-		},
-	});
+	// const { mutateAsync: delMutate } = useMutation(deleteLogService, {
+	// 	onMutate() {
+	// 		notifications.show({
+	// 			color: "blue",
+	// 			message: "กำลังอัพเดตข้อมูล",
+	// 		});
+	// 	},
+	// 	onSuccess() {
+	// 		notifications.show({
+	// 			color: "green",
+	// 			message: "อัพเดตข้อมูลสำเร็จ",
+	// 		});
+	// 		refetch();
+	// 	},
+	// 	onError() {
+	// 		notifications.show({
+	// 			color: "red",
+	// 			message: "อัพเดตข้อมูลล้มเหลว",
+	// 		});
+	// 	},
+	// });
 
-	const deleteModal = (id: number) =>
-		modals.openConfirmModal({
-			title: "ยืนยันการลบผู้ใช้งาน",
-			labels: { confirm: "ยืนยัน", cancel: "ยกเลิก" },
-			onConfirm: () => delMutate(id),
-			//onConfirm: () => console.log(id),
-		});
+	// const deleteModal = (id: number) =>
+	// 	modals.openConfirmModal({
+	// 		title: "ยืนยันการลบผู้ใช้งาน",
+	// 		labels: { confirm: "ยืนยัน", cancel: "ยกเลิก" },
+	// 		onConfirm: () => delMutate(id),
+	// 		//onConfirm: () => console.log(id),
+	// 	});
 
 	const columns = useMemo<MRT_ColumnDef<TLog>[]>(
 		//column definitions...
 		() => [
 			{
-				accessorKey: "account.student_code",
+				accessorKey: "account.account_id",
 				header: "รหัสนักศึกษา",
 			},
 			{
@@ -173,7 +171,7 @@ function LogPage() {
 				<TableComponent
 					columns={columns}
 					data={logsData.logs}
-					deleteAction={deleteModal}
+					// deleteAction={deleteModal}
 				/>
 			</Flex>
 		</>

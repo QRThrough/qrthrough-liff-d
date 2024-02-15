@@ -1,16 +1,15 @@
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { ActionIcon, Box, Tooltip } from "@mantine/core";
-import { IconTrashFilled } from "@tabler/icons-react";
+import { Box } from "@mantine/core";
 import { TLog } from "../../../../types";
 import { useUserDataContext } from "../../../../context/userData";
 
 interface ITableMember {
 	columns: MRT_ColumnDef<TLog>[];
 	data: TLog[];
-	deleteAction: (id: number) => void;
+	// deleteAction: (id: number) => void;
 }
 
-function TableComponent({ columns, data, deleteAction }: ITableMember) {
+function TableComponent({ columns, data }: ITableMember) {
 	const { userData } = useUserDataContext();
 	return (
 		<Box mt="xl" sx={{ overflowY: "scroll" }}>
@@ -24,18 +23,18 @@ function TableComponent({ columns, data, deleteAction }: ITableMember) {
 				enableSorting={false}
 				enableColumnActions={false}
 				enableTopToolbar={false}
-				renderRowActions={({ row }) => (
-					<Box sx={{ display: "flex", gap: "16px" }}>
-						<Tooltip position="right" label="Delete">
-							<ActionIcon
-								color="red"
-								onClick={() => deleteAction(row.original.id)}
-							>
-								<IconTrashFilled />
-							</ActionIcon>
-						</Tooltip>
-					</Box>
-				)}
+				// renderRowActions={({ row }) => (
+				// 	<Box sx={{ display: "flex", gap: "16px" }}>
+				// 		<Tooltip position="right" label="Delete">
+				// 			<ActionIcon
+				// 				color="red"
+				// 				onClick={() => deleteAction(row.original.id)}
+				// 			>
+				// 				<IconTrashFilled />
+				// 			</ActionIcon>
+				// 		</Tooltip>
+				// 	</Box>
+				// )}
 				mantineTableProps={{
 					highlightOnHover: false,
 					withColumnBorders: true,

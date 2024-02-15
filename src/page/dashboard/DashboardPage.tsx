@@ -18,9 +18,7 @@ import EditTime from "../EditTime";
 function DashboardPage() {
 	const [opened, { open, close }] = useDisclosure(false);
 	const { setUserData } = useUserDataContext();
-	const [controller, setController] = useState<TController | undefined>(
-		undefined
-	);
+	const [controller, setController] = useState<TController[]>([]);
 
 	const { status, refetch } = useQuery(
 		"get-dashboard-service",
@@ -32,7 +30,7 @@ function DashboardPage() {
 				if (!liff.isLoggedIn) setUserData(null);
 			},
 			onSuccess(data) {
-				setController(data.data.result);
+				setController(data.data.result ?? []);
 			},
 		}
 	);
@@ -67,23 +65,30 @@ function DashboardPage() {
 			title: "ยืนยันการปรับเปลี่ยนสถานะระบบ",
 			labels: { confirm: "ยืนยัน", cancel: "ยกเลิก" },
 			onConfirm: () => {
-				if (!controller) return;
-				mutateAsync({
-					openTime: controller.openTime,
-					closeTime: controller.closeTime,
-					power: power,
-				});
+				mutateAsync(
+					controller.map((e) =>
+						e.key === "Enable" ? { ...e, value: power ? "true" : "false" } : e
+					)
+				);
+				// mutateAsync({
+				// 	openTime: controller.filter((e) => e.key === "Open")[0].value,
+				// 	closeTime: controller.filter((e) => e.key === "Close")[0].value,
+				// 	power: power,
+				// });
 			},
 		});
 
 	const handleChangeTime = (value: { openTime: string; closeTime: string }) => {
-		if (!controller) return;
-		mutateAsync({ power: controller.power, ...value });
+		mutateAsync(
+			controller
+				.map((e) => (e.key === "Open" ? { ...e, value: value.openTime } : e))
+				.map((e) => (e.key === "Close" ? { ...e, value: value.closeTime } : e))
+		);
 	};
 
 	return (
 		<>
-			{status === "success" && controller != undefined ? (
+			{status === "success" && controller.length > 0 ? (
 				<>
 					<Modal
 						opened={opened}
@@ -115,7 +120,10 @@ function DashboardPage() {
 									offLabel="OFF"
 									size="xl"
 									mt="sm"
-									checked={controller.power}
+									checked={
+										controller.filter((e) => e.key === "Enable")[0].value ===
+										"true"
+									}
 									onChange={(e) => {
 										statusModal(e.target.checked);
 									}}
@@ -128,7 +136,7 @@ function DashboardPage() {
 									<TimeInput
 										readOnly
 										w="min-content"
-										value={controller.openTime}
+										value={controller.filter((e) => e.key === "Open")[0].value}
 										withAsterisk
 									/>{" "}
 									<Text weight={400} size="md">
@@ -137,7 +145,7 @@ function DashboardPage() {
 									<TimeInput
 										readOnly
 										w="min-content"
-										value={controller.closeTime}
+										value={controller.filter((e) => e.key === "Close")[0].value}
 										withAsterisk
 									/>
 									<IconEdit onClick={open} />
