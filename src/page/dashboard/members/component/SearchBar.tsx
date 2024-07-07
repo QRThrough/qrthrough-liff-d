@@ -36,7 +36,7 @@ function SearchBar({
 	filter,
 	setFilter,
 }: ISearchMember) {
-	const exportData = membersData.users.map((e) => {
+	const exportData = membersData.accounts.map((e) => {
 		let regType = "";
 		switch (e.flag) {
 			case "NOTFOUND":

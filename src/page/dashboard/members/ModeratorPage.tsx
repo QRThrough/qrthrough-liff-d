@@ -22,7 +22,7 @@ function ModeratorPage() {
 	const [opened, { open, close }] = useDisclosure(false);
 	const { setUserData } = useUserDataContext();
 	const [membersData, setMembersData] = useState<IResUserResponse>({
-		users: [],
+		accounts: [],
 		count: 0,
 	});
 
@@ -48,11 +48,11 @@ function ModeratorPage() {
 				if (!liff.isLoggedIn) setUserData(null);
 			},
 			onSuccess(data) {
-				const result = data.data.result ?? { users: [], count: 0 };
-				const members = result.users;
+				const result = data.data.result ?? { accounts: [], count: 0 };
+				const members = result.accounts;
 
 				setMembersData({
-					users: members,
+					accounts: members,
 					count: members.length,
 				});
 			},
@@ -251,7 +251,7 @@ function ModeratorPage() {
 				/>
 				<TableComponent
 					columns={columns}
-					data={membersData.users}
+					data={membersData.accounts}
 					editAction={editModal}
 					deleteAction={deleteModal}
 				/>

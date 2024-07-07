@@ -30,17 +30,36 @@ export type TUser = {
 	updated_at: Date;
 };
 
+// export type TLog = {
+// 	id: number;
+// 	account_id: number;
+// 	account: TUser;
+// 	created_at: Date;
+// 	updated_at: Date;
+// };
+
 export type TLog = {
 	id: number;
+	qrcode_id: number;
 	account_id: number;
-	account: TUser;
 	created_at: Date;
-	updated_at: Date;
+
+	account: TUser;
+	qrcode: TQRCode;
+};
+
+export type TQRCode = {
+	id: number;
+	account_id: number;
+	expire_at: Date;
+	created_at: Date;
+
+	account: TUser;
 };
 
 export interface IResUserResponse {
 	count: number;
-	users: TUser[];
+	accounts: TUser[];
 }
 
 export interface IResLogResponse {
