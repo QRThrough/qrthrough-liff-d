@@ -28,7 +28,7 @@ function LogPage() {
 		order: "DATE",
 		sort: "DESC",
 	});
-	const { refetch } = useQuery(
+	useQuery(
 		["all-logs-service", filter],
 		() => {
 			return allLogsService(filter);
